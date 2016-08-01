@@ -5,6 +5,7 @@ jQuery.fn.extend({
 
         var plugin = {
 
+            selector: $(this),
             arr: [/*'0', '0', '0', '0', '0', '0'*/],
             insertCount: 0,
 
@@ -19,8 +20,6 @@ jQuery.fn.extend({
 
             initializeOptions: function (userOptions) {
 
-                console.log(userOptions);
-
                 if (userOptions) {
 
                     for (var prop in userOptions) {
@@ -33,11 +32,11 @@ jQuery.fn.extend({
 
                 }
 
-                console.log(this.options);
-
                 if (this.options.decimalDigits == 0) {
                     this.options.decimalMark = '';
                 }
+
+                var initValFromUser = false;
 
                 if (this.options.initVal == '') {
 
@@ -55,6 +54,8 @@ jQuery.fn.extend({
                         this.options.initVal += '0';
                     }
 
+                } else {
+                    initValFromUser = true;
                 }
 
                 this.options.digitsCount = this.options.integerDigits + this.options.decimalDigits;
@@ -63,6 +64,30 @@ jQuery.fn.extend({
                 for (var i = 0; i < this.options.digitsCount; i++) {
                     this.arr.push('0');
                 }
+
+                if (initValFromUser && parseInt(this.options.initVal) > 0) {
+                    this.createInitialValueArr();
+                }
+
+            },
+
+            createInitialValueArr: function () {
+
+                this.options.initVal = this.options.decimalDigits == 0 ? parseInt(this.options.initVal) : parseFloat(this.options.initVal).toFixed(this.options.decimalDigits).replace('.', this.options.decimalMark);
+
+                var splitted = this.options.initVal.replace('.','').replace(',','').split('');
+
+                for(var i = 0;i<splitted.length;i++){
+                    this.insert(splitted[i]);
+                }
+
+            },
+
+            insert: function (num) {
+
+                var insert = this.mask(num);
+                this.selector.val(insert);
+                this.setCartetOnEnd();
 
             },
 
@@ -92,7 +117,9 @@ jQuery.fn.extend({
                     value += this.arr[i];
                 }
 
-                return this.reduce(value);
+                value = this.reduce(value);
+
+                return value;
 
             },
 
@@ -119,9 +146,12 @@ jQuery.fn.extend({
                 return String.fromCharCode(e.keyCode || e.which);
             },
 
-            setCartetOnEnd: function (selector) {
+            setCartetOnEnd: function () {
+
+                var self = this;
+
                 setTimeout(function () {
-                    selector.selectionStart = selector.selectionEnd = 10000;
+                    self.selector.selectionStart = self.selector.selectionEnd = 10000;
                 }, 1);
             },
 
@@ -139,36 +169,34 @@ jQuery.fn.extend({
 
             },
 
-            init: function (selector) {
+            init: function () {
 
                 var self = this;
 
-                selector.val(this.options.initVal);
+                this.selector.val(this.options.initVal);
 
-                selector.on('focus', function (e) {
-                    self.setCartetOnEnd(selector);
+                this.selector.on('focus', function (e) {
+                    self.setCartetOnEnd();
                 });
 
-                selector.on('keydown', function (e) {
+                this.selector.on('keydown', function (e) {
                     var key = e.keyCode || e.which;
                     if (key == 8 || key == 46) {
                         e.preventDefault();
                         e.stopPropagation();
-                        selector.val(self.mask('backspace'));
-                        self.setCartetOnEnd(selector);
+                        self.insert('backspace');
                     }
 
                 });
 
-                selector.on('keypress', function (e) {
+                this.selector.on('keypress', function (e) {
                     e.preventDefault();
                     e.stopPropagation();
 
                     var num = self.getNumber(e);
 
                     if (self.isNumberOrBackspace(num)) {
-                        selector.val(self.mask(num));
-                        self.setCartetOnEnd(selector);
+                        self.insert(num);
                     }
 
                 });
@@ -178,7 +206,7 @@ jQuery.fn.extend({
         };
 
         plugin.initializeOptions(userOptions);
-        plugin.init($(this));
+        plugin.init();
 
     }
 
