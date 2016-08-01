@@ -5,6 +5,7 @@ jQuery.fn.extend({
 
         var plugin = {
 
+            before: '',
             selector: $(this),
             arr: [/*'0', '0', '0', '0', '0', '0'*/],
             insertCount: 0,
@@ -69,6 +70,8 @@ jQuery.fn.extend({
                     this.createInitialValueArr();
                 }
 
+                this.before = this.options.initVal;
+
             },
 
             createInitialValueArr: function () {
@@ -116,6 +119,7 @@ jQuery.fn.extend({
                 for (var i = 0; i < this.arr.length; i++) {
                     value += this.arr[i];
                 }
+
 
 
                 value = this.reduce(value);
@@ -180,27 +184,64 @@ jQuery.fn.extend({
                     self.setCartetOnEnd();
                 });
 
-                this.selector.on('keydown', function (e) {
-                    var key = e.keyCode || e.which;
-                    if (key == 8 || key == 46) {
+                var ua = navigator.userAgent.toLowerCase();
+                var isAndroid = ua.indexOf("android") > -1; //&& ua.indexOf("mobile");
+                if(isAndroid) {
+
+                    var self = this;
+
+                    this.selector[0].addEventListener('input', function(e) {
                         e.preventDefault();
                         e.stopPropagation();
-                        self.insert('backspace');
-                    }
 
-                });
+                        var valueAfter = this.value;
+                        this.value = self.before;
 
-                this.selector.on('keypress', function (e) {
-                    e.preventDefault();
-                    e.stopPropagation();
+                        if(self.before.length > valueAfter.length){
+                            self.insert('backspace');
+                        }else{
+                            var num = valueAfter.charAt(valueAfter.length-1);
+                            if (self.isNumberOrBackspace(num)) {
+                                self.insert(num);
+                            }
+                        }
 
-                    var num = self.getNumber(e);
+                        self.before = this.value;
 
-                    if (self.isNumberOrBackspace(num)) {
-                        self.insert(num);
-                    }
+                        return false;
 
-                });
+                    }, false);
+
+                }else{
+
+                    this.selector.on('keydown', function (e) {
+                        var key = e.keyCode || e.which;
+
+                        if (key == 8 || key == 46) {
+                            e.preventDefault();
+                            e.stopPropagation();
+                            self.insert('backspace');
+                        }
+
+                    });
+
+                    this.selector.on('keypress', function (e) {
+
+                        var key = e.keyCode || e.which;
+
+                        e.preventDefault();
+                        e.stopPropagation();
+
+                        var num = self.getNumber(e);
+
+                        if (self.isNumberOrBackspace(num)) {
+                            self.insert(num);
+                        }
+
+                    });
+
+                }
+
 
             }
 
