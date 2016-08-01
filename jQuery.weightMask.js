@@ -75,7 +75,7 @@ jQuery.fn.extend({
 
                 this.options.initVal = this.options.decimalDigits == 0 ? parseInt(this.options.initVal) : parseFloat(this.options.initVal).toFixed(this.options.decimalDigits).replace('.', this.options.decimalMark);
 
-                var splitted = this.options.initVal.replace('.','').replace(',','').split('');
+                var splitted = this.options.initVal.toString().replace('.','').replace(',','').split('');
 
                 for(var i = 0;i<splitted.length;i++){
                     this.insert(splitted[i]);
