@@ -1,5 +1,6 @@
 jQuery.fn.extend({
 
+
     maskWeight: function (userOptions) {
 
         var plugin = {
@@ -22,7 +23,7 @@ jQuery.fn.extend({
 
                 if (userOptions) {
 
-                    for(var prop in userOptions){
+                    for (var prop in userOptions) {
 
                         if (userOptions[prop] !== undefined && userOptions[prop] !== null) {
                             this.options[prop] = userOptions[prop];
@@ -33,6 +34,10 @@ jQuery.fn.extend({
                 }
 
                 console.log(this.options);
+
+                if (this.options.decimalDigits == 0) {
+                    this.options.decimalMark = '';
+                }
 
                 if (this.options.initVal == '') {
 
@@ -93,11 +98,20 @@ jQuery.fn.extend({
 
             reduce: function (value) {
 
-                if (this.options.roundingZeros) {
-                    return parseInt(value.substring(0, this.options.integerDigits)) + this.options.decimalMark + value.substring(this.options.integerDigits, this.options.digitsCount);
+                if (this.options.decimalDigits == 0) {
+                    if (this.options.roundingZeros) {
+                        return parseInt(value);
+                    } else {
+                        return value;
+                    }
                 } else {
-                    return value.substring(0, this.options.integerDigits) + this.options.decimalMark + value.substring(this.options.integerDigits, this.options.digitsCount);
+                    if (this.options.roundingZeros) {
+                        return parseInt(value.substring(0, this.options.integerDigits)) + this.options.decimalMark + value.substring(this.options.integerDigits, this.options.digitsCount);
+                    } else {
+                        return value.substring(0, this.options.integerDigits) + this.options.decimalMark + value.substring(this.options.integerDigits, this.options.digitsCount);
+                    }
                 }
+
 
             },
 

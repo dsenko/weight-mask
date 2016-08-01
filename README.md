@@ -36,7 +36,7 @@ Plugin offers few options to customize mask:
 
 **integerDigits** default 3. Describes number of integers before decimal mark
 
-**decimalDigits** default 3. Describes number of decimal places after decimal mark
+**decimalDigits** default 3. Describes number of decimal places after decimal mark. **Can be 0, then mask works only with integers!**
 
 **decimalMark** default '.' (dot). Sets custom decimal mark
 
