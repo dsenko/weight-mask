@@ -73,7 +73,7 @@ jQuery.fn.extend({
 
             createInitialValueArr: function () {
 
-                this.options.initVal = this.options.decimalDigits == 0 ? parseInt(this.options.initVal) : parseFloat(this.options.initVal).toFixed(this.options.decimalDigits).replace('.', this.options.decimalMark);
+                this.options.initVal = this.options.decimalDigits == 0 ? parseInt(this.options.initVal) : parseFloat(this.options.initVal.toString().replace(',','.')).toFixed(this.options.decimalDigits).replace('.', this.options.decimalMark);
 
                 var splitted = this.options.initVal.toString().replace('.','').replace(',','').split('');
 
@@ -117,7 +117,6 @@ jQuery.fn.extend({
                     value += this.arr[i];
                 }
 
-                console.log(value);
 
                 value = this.reduce(value);
 
