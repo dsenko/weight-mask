@@ -117,6 +117,8 @@ jQuery.fn.extend({
                     value += this.arr[i];
                 }
 
+                console.log(value);
+
                 value = this.reduce(value);
 
                 return value;
@@ -161,7 +163,7 @@ jQuery.fn.extend({
                     return true;
                 }
 
-                if (parseInt(num)) {
+                if (parseInt(num) || parseInt(num) == 0) {
                     return true;
                 }
 
