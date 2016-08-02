@@ -156,8 +156,15 @@ jQuery.fn.extend({
                 var self = this;
 
                 setTimeout(function () {
-                    self.selector.selectionStart = self.selector.selectionEnd = 10000;
+
+                    var len = self.selector.val().length;
+                    self.selector[0].focus();
+                    self.selector[0].setSelectionRange(len, len);
+
+                    //self.selector.selectionStart = self.selector.selectionEnd = 10000;
+
                 }, 1);
+
             },
 
             isNumberOrBackspace: function (num) {
@@ -180,7 +187,7 @@ jQuery.fn.extend({
 
                 this.selector.val(this.options.initVal);
 
-                this.selector.on('focus', function (e) {
+                this.selector.on('click', function (e) {
                     self.setCartetOnEnd();
                 });
 
@@ -188,11 +195,11 @@ jQuery.fn.extend({
                 var isAndroid = ua.indexOf("android") > -1; //&& ua.indexOf("mobile");
                 if(isAndroid) {
 
-                    var self = this;
-
                     this.selector[0].addEventListener('input', function(e) {
                         e.preventDefault();
                         e.stopPropagation();
+
+                        console.log(e);
 
                         var valueAfter = this.value;
                         this.value = self.before;
@@ -241,7 +248,6 @@ jQuery.fn.extend({
                     });
 
                 }
-
 
             }
 
