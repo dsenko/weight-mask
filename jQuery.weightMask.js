@@ -3,14 +3,17 @@ jQuery.fn.extend({
 
     maskWeight: function (userOptions) {
 
-        var plugin = {
+        window._maskData = {
 
-            before: '',
             selector: $(this),
             arr: [/*'0', '0', '0', '0', '0', '0'*/],
             insertCount: 0,
+            numberPressed: false,
 
             options: {
+            },
+
+            defOptions: {
                 integerDigits: 3,
                 decimalDigits: 3,
                 decimalMark: '.',
@@ -20,6 +23,11 @@ jQuery.fn.extend({
             },
 
             initializeOptions: function (userOptions) {
+
+                this.options = $.extend(true, this.defOptions);
+                this.arr = [];
+                this.insertCount = 0;
+                this.numberPressed = false;
 
                 if (userOptions) {
 
@@ -70,17 +78,15 @@ jQuery.fn.extend({
                     this.createInitialValueArr();
                 }
 
-                this.before = this.options.initVal;
-
             },
 
             createInitialValueArr: function () {
 
-                this.options.initVal = this.options.decimalDigits == 0 ? parseInt(this.options.initVal) : parseFloat(this.options.initVal.toString().replace(',','.')).toFixed(this.options.decimalDigits).replace('.', this.options.decimalMark);
+                this.options.initVal = this.options.decimalDigits == 0 ? parseInt(this.options.initVal) : parseFloat(this.options.initVal.toString().replace(',', '.')).toFixed(this.options.decimalDigits).replace('.', this.options.decimalMark);
 
-                var splitted = this.options.initVal.toString().replace('.','').replace(',','').split('');
+                var splitted = this.options.initVal.toString().replace('.', '').replace(',', '').split('');
 
-                for(var i = 0;i<splitted.length;i++){
+                for (var i = 0; i < splitted.length; i++) {
                     this.insert(splitted[i]);
                 }
 
@@ -119,7 +125,6 @@ jQuery.fn.extend({
                 for (var i = 0; i < this.arr.length; i++) {
                     value += this.arr[i];
                 }
-
 
 
                 value = this.reduce(value);
@@ -192,34 +197,49 @@ jQuery.fn.extend({
                 });
 
                 var ua = navigator.userAgent.toLowerCase();
-                var isAndroid = ua.indexOf("android") > -1; //&& ua.indexOf("mobile");
-                if(isAndroid) {
+                var isAndroid = ua.indexOf("android") > -1;
+                if (isAndroid) {
 
-                    this.selector[0].addEventListener('input', function(e) {
+
+                    this.selector.unbind('keydown');
+                    this.selector.on('keydown', function (e) {
                         e.preventDefault();
                         e.stopPropagation();
 
-                        console.log(e);
+                        self.numberPressed = true;
 
-                        var valueAfter = this.value;
-                        this.value = self.before;
+                        var num = this.value.charAt(this.value.length - 1);
 
-                        if(self.before.length > valueAfter.length){
-                            self.insert('backspace');
-                        }else{
-                            var num = valueAfter.charAt(valueAfter.length-1);
-                            if (self.isNumberOrBackspace(num)) {
-                                self.insert(num);
-                            }
-                        }
+                        self.insert(num);
 
-                        self.before = this.value;
+                    });
 
-                        return false;
+                    this.selector[0].removeEventListener('input', window._maskDataAndroidMaskHandler, false);
 
-                    }, false);
+                    setTimeout(function(){
 
-                }else{
+                        window._maskDataAndroidMaskHandler = function (e) {
+                            e.preventDefault();
+                            e.stopPropagation();
+
+                            setTimeout(function () {
+
+                                if (!self.numberPressed) {
+                                    self.insert('backspace');
+                                }
+
+                                self.numberPressed = false;
+
+                            }, 0);
+
+                        };
+
+                        self.selector[0].addEventListener('input', window._maskDataAndroidMaskHandler, false);
+
+                    }, 0);
+
+
+                } else {
 
                     this.selector.on('keydown', function (e) {
                         var key = e.keyCode || e.which;
@@ -253,10 +273,19 @@ jQuery.fn.extend({
 
         };
 
-        plugin.initializeOptions(userOptions);
-        plugin.init();
+        window._maskData.initializeOptions(userOptions);
+        window._maskData.init();
 
-    }
+    },
+
+    removeMask: function () {
+
+        if (window._maskData) {
+            $(this).unbind();
+            window._maskData = null;
+        }
+
+    },
 
 });
 
