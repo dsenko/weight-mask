@@ -4,6 +4,7 @@
     }
 }
 */
+
 jQuery.fn.extend({
 
 
@@ -25,6 +26,7 @@ jQuery.fn.extend({
                 initVal: '',//'000,000',
                 roundingZeros: true,
                 digitsCount: 6,
+                callBack: null,
             },
 
             initializeOptions: function (userOptions) {
@@ -231,6 +233,9 @@ jQuery.fn.extend({
 
                             window._maskDataLastVal = self.selector.val();
 
+                            if(self.options.callBack){
+                                self.options.callBack();
+                            }
 
                             return false;
 
@@ -252,6 +257,10 @@ jQuery.fn.extend({
                             self.insert('backspace');
                         }
 
+                        if(self.options.callBack){
+                            self.options.callBack();
+                        }
+                        
                     });
 
                     this.selector.on('keypress', function (e) {
@@ -271,6 +280,10 @@ jQuery.fn.extend({
                                 self.insert(num);
                             }
 
+                        }
+
+                        if(self.options.callBack){
+                            self.options.callBack();
                         }
 
                     });
