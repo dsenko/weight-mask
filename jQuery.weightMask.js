@@ -1,10 +1,9 @@
-
-/*var console  = {
-    log: function(msg){
-        $('#log').prepend('<p>'+JSON.stringify(msg)+'</p>');
+/*var console = {
+    log: function (msg) {
+        $('#log').prepend('<p>' + JSON.stringify(msg) + '</p>');
     }
-}*/
-
+}
+*/
 jQuery.fn.extend({
 
 
@@ -17,8 +16,7 @@ jQuery.fn.extend({
             insertCount: 0,
             numberPressed: false,
 
-            options: {
-            },
+            options: {},
 
             defOptions: {
                 integerDigits: 3,
@@ -101,12 +99,9 @@ jQuery.fn.extend({
 
             insert: function (num) {
 
-                if(parseFloat(this.selector.val().replace(',','.')) == 0 && parseInt(num) == 0){
-                    return;
-                }
-
                 var insert = this.mask(num);
                 this.selector.val(insert);
+
                 this.setCartetOnEnd();
 
             },
@@ -221,16 +216,21 @@ jQuery.fn.extend({
                             e.preventDefault();
                             e.stopPropagation();
 
-                            console.log(e);
-
-                            if(self.selector.val().length < window._maskDataLastVal.length){
+                            if (self.selector.val().length < window._maskDataLastVal.length) {
                                 self.insert('backspace');
-                            }else{
-                                var num = self.selector.val().charAt(this.value.length - 1);
-                                self.insert(num);
+                            } else {
+                                var num = self.selector.val().charAt(self.selector.val().length - 1);
+
+                                if(parseFloat(self.selector.val().replace(',','.')) == 0 && parseInt(num) == 0){
+                                    self.insert('backspace');
+                                }else{
+                                    self.insert(num);
+                                }
+
                             }
 
                             window._maskDataLastVal = self.selector.val();
+
 
                             return false;
 
@@ -239,7 +239,6 @@ jQuery.fn.extend({
                         self.selector[0].addEventListener('input', window._maskDataAndroidMaskHandler, true);
 
                     }, 0);
-
 
 
                 } else {
