@@ -264,7 +264,13 @@ jQuery.fn.extend({
                         var num = self.getNumber(e);
 
                         if (self.isNumberOrBackspace(num)) {
-                            self.insert(num);
+
+                            if(parseFloat(self.selector.val().replace(',','.')) == 0 && parseInt(num) == 0){
+                                self.insert('backspace');
+                            }else{
+                                self.insert(num);
+                            }
+
                         }
 
                     });
