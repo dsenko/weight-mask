@@ -1,3 +1,10 @@
+
+/*var console  = {
+    log: function(msg){
+        $('#log').prepend('<p>'+JSON.stringify(msg)+'</p>');
+    }
+}*/
+
 jQuery.fn.extend({
 
 
@@ -93,6 +100,10 @@ jQuery.fn.extend({
             },
 
             insert: function (num) {
+
+                if(parseFloat(this.selector.val().replace(',','.')) == 0 && parseInt(num) == 0){
+                    return;
+                }
 
                 var insert = this.mask(num);
                 this.selector.val(insert);
@@ -201,7 +212,7 @@ jQuery.fn.extend({
                 if (isAndroid) {
 
                     window._maskDataLastVal = this.selector.val();
-                    
+
                     this.selector[0].removeEventListener('input', window._maskDataAndroidMaskHandler, true);
 
                     setTimeout(function () {
