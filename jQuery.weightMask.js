@@ -1,9 +1,9 @@
 /*var console = {
-    log: function (msg) {
-        $('#log').prepend('<p>' + JSON.stringify(msg) + '</p>');
-    }
-}
-*/
+ log: function (msg) {
+ $('#log').prepend('<p>' + JSON.stringify(msg) + '</p>');
+ }
+ }
+ */
 
 jQuery.fn.extend({
 
@@ -27,6 +27,7 @@ jQuery.fn.extend({
                 roundingZeros: true,
                 digitsCount: 6,
                 callBack: null,
+                doFocus: true,
             },
 
             initializeOptions: function (userOptions) {
@@ -171,7 +172,11 @@ jQuery.fn.extend({
                 setTimeout(function () {
 
                     var len = self.selector.val().length;
-                    self.selector[0].focus();
+
+                    if(self.options.doFocus){
+                        self.selector[0].focus();
+                    }
+
                     self.selector[0].setSelectionRange(len, len);
 
                     //self.selector.selectionStart = self.selector.selectionEnd = 10000;
@@ -260,7 +265,7 @@ jQuery.fn.extend({
                         if(self.options.callBack){
                             self.options.callBack();
                         }
-                        
+
                     });
 
                     this.selector.on('keypress', function (e) {
